@@ -3,7 +3,7 @@ export const getImageUrl = (path) => {
   if (path.startsWith('http') || path.startsWith('blob:')) return path;
   
   // Connect local /uploads path to backend server
-  const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const baseURL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000');
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   return `${baseURL}${normalizedPath}`;
 };
