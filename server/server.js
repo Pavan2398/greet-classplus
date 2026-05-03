@@ -61,37 +61,10 @@ const startServer = async () => {
   app.use('/api/image', imageRoutes);
   app.use('/api/subscription', subscriptionRoutes);
 
-  // Define frontend path (now inside server folder)
-  const clientBuildPath = path.resolve(__dirname, 'dist');
-
-  // Root & Frontend serving in production
-  if (process.env.NODE_ENV === 'production') {
-    console.log('--- PRODUCTION STARTUP ---');
-    console.log('Serving from:', clientBuildPath);
-    console.log('Exists:', fs.existsSync(clientBuildPath));
-    console.log('--------------------------');
-    
-    // 1. Serve static files with high priority
-    app.use(express.static(clientBuildPath, { index: false }));
-
-    // 2. Handle all other requests
-    app.use((req, res, next) => {
-      // API requests go to routers
-      if (req.path.startsWith('/api')) return next();
-      
-      // If it looks like a file request but wasn't found by express.static, 404 it
-      if (req.path.includes('.') && !req.path.endsWith('.html')) {
-        return res.status(404).send('File not found');
-      }
-
-      // Everything else gets index.html (SPA routing)
-      res.sendFile(path.join(clientBuildPath, 'index.html'));
-    });
-  } else {
-    app.get('/', (req, res) => {
-      res.send('Greetings App API is running (Development Mode)...');
-    });
-  }
+  // Root API Route
+  app.get('/', (req, res) => {
+    res.send('WishCraft Greetings API is running...');
+  });
 
   // Global Error Handling Middleware
   app.use((err, req, res, next) => {
