@@ -59,8 +59,8 @@ const startServer = async () => {
   app.use('/api/image', imageRoutes);
   app.use('/api/subscription', subscriptionRoutes);
 
-  // Define frontend path
-  const clientBuildPath = path.resolve(__dirname, '../client/dist');
+  // Define frontend path (now inside server folder)
+  const clientBuildPath = path.resolve(__dirname, 'dist');
 
   // Root & Frontend serving in production
   if (process.env.NODE_ENV === 'production') {

@@ -18,8 +18,8 @@ RUN npm install --production
 # Copy server source
 COPY server/ ./
 
-# Copy built frontend from Stage 1
-COPY --from=client-builder /app/client/dist /app/client/dist
+# Copy built frontend from Stage 1 into the server folder
+COPY --from=client-builder /app/client/dist ./dist
 
 # Expose port
 EXPOSE 5000
