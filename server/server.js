@@ -60,16 +60,16 @@ const startServer = async () => {
 
   // Root & Frontend serving in production
   if (process.env.NODE_ENV === 'production') {
-    const clientBuildPath = path.join(__dirname, '../client/dist');
+    // In Docker, the client/dist is at /app/client/dist
+    const clientBuildPath = path.resolve(__dirname, '../client/dist');
+    
+    // Serve static files first
     app.use(express.static(clientBuildPath));
 
-    // Bulletproof catch-all for SPA
-    app.use((req, res, next) => {
-      if (!req.path.startsWith('/api')) {
-        res.sendFile(path.join(clientBuildPath, 'index.html'));
-      } else {
-        next();
-      }
+    // Handle SPA routing - send index.html for all non-api routes
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) return next();
+      res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
   } else {
     app.get('/', (req, res) => {
