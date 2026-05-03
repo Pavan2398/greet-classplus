@@ -1,168 +1,92 @@
-# 🎉 WishCraft — Custom Greetings & Wishes App
+# WishCraft Greetings 🎨✨
 
-A production-ready full-stack application for creating, personalizing, and sharing greeting cards.
+WishCraft is a production-grade full-stack SaaS application that allows users to browse, personalize, and generate high-quality greeting cards for any occasion. Built with a modern tech stack, it features real-time canvas-based image processing, secure authentication, and a subscription-based premium system.
 
-## 🧱 Tech Stack
+## 🌟 Key Features
 
-| Layer | Tech |
-|-------|------|
-| Frontend | React.js + Vite + Tailwind CSS v4 |
-| Backend | Node.js + Express.js |
-| Database | MongoDB + Mongoose |
-| Auth | JWT (Access + Refresh tokens, HTTP-only cookies) |
-| Image Processing | Sharp (server-side merging) + HTML Canvas (live preview) |
-| File Storage | Multer (local uploads) |
-| State Management | Zustand (with persist) |
+- **Personalized Greetings**: Customize templates with your name and profile photo in real-time.
+- **Dynamic Image Generation**: Server-side image processing using **Sharp** to generate high-resolution cards.
+- **Authentication**: Secure JWT-based authentication with Access and Refresh tokens (HTTP-only cookies).
+- **Google OAuth**: One-click login using Google accounts.
+- **Subscription System**: Premium templates unlockable via a subscription layer.
+- **Cloud Assets**: High-quality, reliable template images powered by Unsplash.
+- **Responsive Design**: Modern, premium UI built with React.js and Tailwind CSS.
 
----
+## 🛠️ Technology Stack
+
+- **Frontend**: React.js (Vite), Tailwind CSS, Axios, Lucide Icons.
+- **Backend**: Node.js, Express.js, MongoDB (Mongoose).
+- **Processing**: Sharp (for server-side image manipulation).
+- **Security**: JWT, bcrypt.js, Cookie-parser, CORS.
 
 ## 📁 Project Structure
 
-```
-ClassPlus/
-├── server/                   # Express Backend
-│   ├── config/db.js
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── userController.js
-│   │   ├── templateController.js
-│   │   ├── imageController.js
-│   │   └── subscriptionController.js
-│   ├── middleware/authMiddleware.js
-│   ├── models/
-│   │   ├── User.js
-│   │   └── Template.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── userRoutes.js
-│   │   ├── templateRoutes.js
-│   │   ├── imageRoutes.js
-│   │   └── subscriptionRoutes.js
-│   ├── utils/generateToken.js
-│   ├── uploads/              # Generated & uploaded images
-│   ├── .env
-│   └── server.js
-│
-└── client/                   # React Frontend
-    └── src/
-        ├── components/
-        │   ├── Navbar.jsx
-        │   ├── TemplateCard.jsx
-        │   ├── PremiumModal.jsx
-        │   └── PreviewCanvas.jsx
-        ├── pages/
-        │   ├── Home.jsx
-        │   ├── Login.jsx
-        │   ├── Register.jsx
-        │   ├── Profile.jsx
-        │   └── Preview.jsx
-        ├── services/api.js
-        ├── store/authStore.js
-        ├── App.jsx
-        ├── main.jsx
-        └── index.css
+```text
+├── client/          # React.js frontend (Vite)
+├── server/          # Node.js Express backend
+└── README.md
 ```
 
----
+## ⚙️ Local Setup Instructions
 
-## ⚙️ Setup Instructions
+### 1. Prerequisites
+- Node.js (v18 or higher)
+- MongoDB (Local or Atlas)
+- Google Cloud Console Project (for Google Login)
 
-### Prerequisites
-- **Node.js** v18+
-- **MongoDB** running locally (`mongodb://127.0.0.1:27017`) or use MongoDB Atlas
-
-### 1. Clone / Open the project
+### 2. Clone the Repository
 ```bash
-cd ClassPlus
+git clone https://github.com/Pavan2398/greet-classplus.git
+cd greet-classplus
 ```
 
-### 2. Setup Backend
-
+### 3. Backend Setup
 ```bash
 cd server
-# .env is already configured for local dev
 npm install
+```
+Create a `.env` file in the `server` directory:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
+```
+Start the server:
+```bash
 npm run dev
 ```
 
-Backend runs at **http://localhost:5000**
-
-### 3. Seed Templates (REQUIRED on first run)
-
-```bash
-curl -X POST http://localhost:5000/api/templates/seed
-```
-Or open in browser: `http://localhost:5000/api/templates/seed` (POST via Postman/Thunder Client)
-
-### 4. Setup Frontend
-
+### 4. Frontend Setup
 ```bash
 cd ../client
 npm install
+```
+Create a `.env` file in the `client` directory:
+```env
+VITE_API_URL=http://localhost:5000
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+```
+Start the client:
+```bash
 npm run dev
 ```
 
-Frontend runs at **http://localhost:5173**
+## 📜 API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/login` | Login and get tokens |
+| `GET` | `/api/templates` | Fetch all greeting templates |
+| `POST` | `/api/image/generate`| Generate a personalized image |
+| `PUT` | `/api/user/profile` | Update user name or photo |
+
+## 🤝 Contributing
+Feel free to fork this project and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ---
-
-## 🔐 Environment Variables (`server/.env`)
-
-```env
-PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/greetings-app
-JWT_SECRET=supersecretjwtkeyforgreetingsapp
-JWT_REFRESH_SECRET=supersecretjwtrefreshkeyforgreetingsapp
-NODE_ENV=development
-```
-
----
-
-## 🚀 API Endpoints
-
-### Auth
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register with email/password |
-| POST | `/api/auth/login` | Login |
-| POST | `/api/auth/guest` | Guest login |
-| POST | `/api/auth/logout` | Logout (clears cookie) |
-| GET | `/api/auth/refresh` | Refresh access token |
-| GET | `/api/auth/me` | Get current user |
-
-### User
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/user/profile` | Get profile |
-| PUT | `/api/user/profile` | Update name + photo |
-
-### Templates
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/templates` | All templates (optional `?category=Birthday`) |
-| GET | `/api/templates/:id` | Single template |
-| POST | `/api/templates/seed` | Seed sample templates |
-
-### Image
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/image/generate` | Merge template + user photo + name |
-
-### Subscription
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/subscription/subscribe` | Activate premium (30 days) |
-| GET | `/api/subscription/status` | Check subscription status |
-
----
-
-## ✨ Features
-
-- 🔐 Email/Password auth + Guest login
-- 👤 Profile management with photo upload
-- 🎨 Browse templates by category (Birthday, Wedding, Festival, etc.)
-- 🖼️ Live HTML Canvas preview with name + photo overlay
-- ⚡ Server-side image generation with Sharp
-- 📤 Download, WhatsApp share, Email share, Copy link
-- 💎 Premium subscription system with modal
-- 🌙 Dark mode design with glassmorphism
+**Happy Greet-ing!** 🥂🚀
