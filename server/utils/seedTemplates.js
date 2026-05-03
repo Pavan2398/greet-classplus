@@ -4,7 +4,7 @@ const defaultTemplates = [
   {
     title: 'Morning Sunshine',
     category: 'Greetings',
-    imageUrl: 'https://images.unsplash.com/photo-1470252649358-96f3e8053119?w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
     isPremium: false,
     overlayConfig: {
       namePosition: { x: 50, y: 7, fontSize: 32, color: '#ffffff', align: 'center' },
@@ -14,7 +14,7 @@ const defaultTemplates = [
   {
     title: 'Midnight Fireworks',
     category: 'New Year',
-    imageUrl: 'https://images.unsplash.com/photo-1533230398624-46c65bb52cb4?w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=800',
     isPremium: false,
     overlayConfig: {
       namePosition: { x: 50, y: 7, fontSize: 32, color: '#ffffff', align: 'center' },
@@ -34,7 +34,7 @@ const defaultTemplates = [
   {
     title: 'Festival Lights',
     category: 'Festival',
-    imageUrl: 'https://images.unsplash.com/photo-1514222139-b57c44ce4169?w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=800',
     isPremium: false,
     overlayConfig: {
       namePosition: { x: 50, y: 7, fontSize: 32, color: '#ffffff', align: 'center' },
@@ -64,7 +64,7 @@ const defaultTemplates = [
   {
     title: 'Happy Birthday Classic',
     category: 'Birthday',
-    imageUrl: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=800',
+    imageUrl: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800',
     isPremium: false,
     overlayConfig: {
       namePosition: { x: 50, y: 7, fontSize: 32, color: '#ffffff', align: 'center' },
@@ -75,25 +75,13 @@ const defaultTemplates = [
 
 export const seedTemplates = async () => {
   try {
-    for (const t of defaultTemplates) {
-      console.log(`Syncing template: ${t.title}...`);
-      await Template.findOneAndUpdate(
-        { title: t.title },
-        { 
-          $set: { 
-            imageUrl: t.imageUrl,
-            category: t.category,
-            isPremium: t.isPremium,
-            overlayConfig: t.overlayConfig
-          } 
-        },
-        { upsert: true, new: true }
-      );
-    }
-    console.log('Template synchronization complete');
+    console.log('PURGING OLD TEMPLATES FOR FRESH START...');
+    await Template.deleteMany({}); // Complete purge to ensure no broken paths remain
+    
+    await Template.insertMany(defaultTemplates);
+    console.log('SUCCESS: All templates seeded with verified cloud images.');
   } catch (error) {
-    console.error(`Error seeding templates: ${error.message}`);
+    console.error(`CRITICAL SEEDING ERROR: ${error.message}`);
   }
+};
 
-
-}
