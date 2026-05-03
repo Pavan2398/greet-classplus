@@ -32,14 +32,13 @@ const startServer = async () => {
   app.use(cookieParser());
 
   // CORS config
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    process.env.FRONTEND_URL
-  ].filter(Boolean);
-
-  app.use(cors({
+  const corsOptions = {
     origin: (origin, callback) => {
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        'http://localhost:5173',
+        'https://greet-classplus.vercel.app'
+      ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -47,7 +46,9 @@ const startServer = async () => {
       }
     },
     credentials: true
-  }));
+  };
+
+  app.use(cors(corsOptions));
 
   // Serve uploaded images as static
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
