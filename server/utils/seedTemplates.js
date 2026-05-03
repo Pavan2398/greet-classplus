@@ -52,16 +52,6 @@ const defaultTemplates = [
     }
   },
   {
-    title: 'Anniversary Gold',
-    category: 'Anniversary',
-    imageUrl: 'https://images.unsplash.com/photo-1530103862676-fa8c9d34bb34?w=800',
-    isPremium: false,
-    overlayConfig: {
-      namePosition: { x: 50, y: 7, fontSize: 32, color: '#ffffff', align: 'center' },
-      imagePosition: { x: 10, y: 10, width: 140, height: 140, shape: 'circle', borderColor: '#4ade80' }
-    }
-  },
-  {
     title: 'Happy Birthday Classic',
     category: 'Birthday',
     imageUrl: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800',
