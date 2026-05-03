@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import connectDB from './config/db.js';
 import { seedTemplates } from './utils/seedTemplates.js';
 import authRoutes from './routes/authRoutes.js';
@@ -60,10 +61,13 @@ const startServer = async () => {
 
   // Root & Frontend serving in production
   if (process.env.NODE_ENV === 'production') {
-    // In Docker, the client/dist is at /app/client/dist
     const clientBuildPath = path.resolve(__dirname, '../client/dist');
+    console.log('--- PRODUCTION PATH DEBUG ---');
+    console.log('__dirname:', __dirname);
+    console.log('clientBuildPath:', clientBuildPath);
+    console.log('Exists:', fs.existsSync(clientBuildPath));
+    console.log('-----------------------------');
     
-    // Serve static files first
     app.use(express.static(clientBuildPath));
 
     // Handle SPA routing - send index.html for all non-api routes
