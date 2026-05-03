@@ -91,4 +91,7 @@ const startServer = async () => {
   });
 };
 
-startServer();
+startServer().catch(err => {
+  console.error('FAILED TO START SERVER:', err);
+  process.exit(1);
+});
