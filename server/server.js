@@ -21,10 +21,18 @@ dotenv.config();
 
 // Connect to database and seed templates
 const startServer = async () => {
-  await connectDB();
-  await seedTemplates();
+  console.log('--- STARTING SERVER ---');
+  try {
+    console.log('Connecting to MongoDB...');
+    await connectDB();
+    console.log('MongoDB Connected successfully');
 
-  const app = express();
+    console.log('Starting Template Seeding...');
+    await seedTemplates();
+    console.log('Template Seeding finished');
+
+    const app = express();
+    console.log('Express app initialized');
 
   // Middleware
   app.use(express.json());
@@ -82,9 +90,10 @@ const startServer = async () => {
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
   });
+  } catch (err) {
+    console.error('FAILED TO START SERVER:', err);
+    process.exit(1);
+  }
 };
 
-startServer().catch(err => {
-  console.error('FAILED TO START SERVER:', err);
-  process.exit(1);
-});
+startServer();
