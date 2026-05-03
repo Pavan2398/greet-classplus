@@ -10,12 +10,22 @@ const __dirname = path.dirname(__filename);
 // Helper: download image from URL to buffer
 const fetchImageBuffer = async (url) => {
   if (url.startsWith('http')) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
-    return Buffer.from(await res.arrayBuffer());
+    console.log('Fetching remote image:', url);
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+    if (!res.ok) throw new Error(`Failed to fetch image (${res.status}): ${url}`);
+    const arrayBuffer = await res.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   } else {
     // Local file
-    const localPath = path.join(__dirname, '..', url);
+    const localPath = path.resolve(__dirname, '..', url.startsWith('/') ? url.slice(1) : url);
+    if (!fs.existsSync(localPath)) {
+      console.error('Local image not found:', localPath);
+      throw new Error(`Local image not found: ${url}`);
+    }
     return fs.readFileSync(localPath);
   }
 };
