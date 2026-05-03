@@ -66,16 +66,20 @@ const startServer = async () => {
     console.log('__dirname:', __dirname);
     console.log('clientBuildPath:', clientBuildPath);
     console.log('Exists:', fs.existsSync(clientBuildPath));
+    console.log('Contents:', fs.readdirSync(clientBuildPath));
     console.log('-----------------------------');
     
     app.use(express.static(clientBuildPath));
 
-    // Handle SPA routing - send index.html for all non-api routes
+    // Handle SPA routing - send index.html for all navigation requests
     app.use((req, res, next) => {
-      // If it's an API request, let it pass to the routers
+      // If it's an API request, let it pass
       if (req.path.startsWith('/api')) return next();
       
-      // Otherwise, serve the frontend
+      // If it's a request for a file (has an extension), let it fail with 404
+      if (req.path.includes('.')) return next();
+      
+      // Otherwise, serve the frontend for navigation
       res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
   } else {
