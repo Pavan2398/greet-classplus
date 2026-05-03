@@ -12,8 +12,8 @@ const generateTokens = (res, userId) => {
   // Set Refresh Token as HTTP-Only Cookie
   res.cookie('jwt', refreshToken, {
     httpOnly: true,
-    secure: true, // Must be true for sameSite: 'none'
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: true, // Always true for cross-site compatibility
+    sameSite: 'none', // Always 'none' for Vercel + Render compatibility
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
