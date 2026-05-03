@@ -63,10 +63,12 @@ const startServer = async () => {
     const clientBuildPath = path.join(__dirname, '../client/dist');
     app.use(express.static(clientBuildPath));
 
-    app.get('/:path*', (req, res) => {
-      // Check if the request is for an API route - if not, serve the frontend
+    // Bulletproof catch-all for SPA
+    app.use((req, res, next) => {
       if (!req.path.startsWith('/api')) {
         res.sendFile(path.join(clientBuildPath, 'index.html'));
+      } else {
+        next();
       }
     });
   } else {
