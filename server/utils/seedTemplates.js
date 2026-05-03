@@ -76,10 +76,17 @@ const defaultTemplates = [
 export const seedTemplates = async () => {
   try {
     for (const t of defaultTemplates) {
-      // Sync by title to ensure images are updated to cloud URLs
+      console.log(`Syncing template: ${t.title}...`);
       await Template.findOneAndUpdate(
         { title: t.title },
-        t,
+        { 
+          $set: { 
+            imageUrl: t.imageUrl,
+            category: t.category,
+            isPremium: t.isPremium,
+            overlayConfig: t.overlayConfig
+          } 
+        },
         { upsert: true, new: true }
       );
     }
