@@ -67,8 +67,11 @@ const startServer = async () => {
     app.use(express.static(clientBuildPath));
 
     // Handle SPA routing - send index.html for all non-api routes
-    app.get('*', (req, res, next) => {
+    app.use((req, res, next) => {
+      // If it's an API request, let it pass to the routers
       if (req.path.startsWith('/api')) return next();
+      
+      // Otherwise, serve the frontend
       res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
   } else {
