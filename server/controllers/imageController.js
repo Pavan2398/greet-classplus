@@ -43,7 +43,12 @@ export const generateImage = async (req, res, next) => {
     }
 
     // Fetch template background
-    const templateBuffer = await fetchImageBuffer(templateImageUrl);
+    let templateBuffer = await fetchImageBuffer(templateImageUrl);
+
+    // Memory Safety: Resize template to a reasonable max-width before processing
+    templateBuffer = await sharp(templateBuffer)
+      .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+      .toBuffer();
 
     // Get template dimensions
     const templateMeta = await sharp(templateBuffer).metadata();
