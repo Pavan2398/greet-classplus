@@ -39,7 +39,6 @@ export const updateUserProfile = async (req, res, next) => {
     }
 
     const updatedUser = await user.save();
-
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
@@ -48,6 +47,7 @@ export const updateUserProfile = async (req, res, next) => {
       isPremium: updatedUser.isPremium,
     });
   } catch (error) {
+    console.error('PROFILE UPDATE ERROR:', error.stack);
     next(error);
   }
 };

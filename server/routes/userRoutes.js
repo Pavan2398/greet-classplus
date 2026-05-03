@@ -4,8 +4,16 @@ import path from 'path';
 import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
+import fs from 'fs';
+
+// Ensure uploads directory exists
+const uploadsDir = 'uploads';
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
     const unique = `${req.user._id}_${Date.now()}${path.extname(file.originalname)}`;
     cb(null, unique);

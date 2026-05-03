@@ -9,6 +9,17 @@ const __dirname = path.dirname(__filename);
 
 // Helper: download image from URL to buffer
 const fetchImageBuffer = async (url) => {
+  if (!url) return null;
+
+  // Fix: If the URL contains localhost but we are on a real server, treat it as a local file
+  if (url.includes('localhost:5000') || url.includes('127.0.0.1:5000')) {
+    const relativePath = url.split('/uploads/')[1];
+    if (relativePath) {
+      const localPath = path.resolve(__dirname, '..', 'uploads', relativePath);
+      if (fs.existsSync(localPath)) return fs.readFileSync(localPath);
+    }
+  }
+
   if (url.startsWith('http')) {
     console.log('Fetching remote image:', url);
     const res = await fetch(url, {
@@ -24,6 +35,10 @@ const fetchImageBuffer = async (url) => {
     const localPath = path.resolve(__dirname, '..', url.startsWith('/') ? url.slice(1) : url);
     if (!fs.existsSync(localPath)) {
       console.error('Local image not found:', localPath);
+      // Fallback for relative uploads
+      const uploadsFallback = path.resolve(__dirname, '..', 'uploads', url.split('/uploads/')[1] || '');
+      if (fs.existsSync(uploadsFallback)) return fs.readFileSync(uploadsFallback);
+      
       throw new Error(`Local image not found: ${url}`);
     }
     return fs.readFileSync(localPath);
@@ -142,13 +157,14 @@ export const generateImage = async (req, res, next) => {
     }
 
     // Compose final image
+    console.log('Compositing image with', compositeInputs.length, 'layers');
     const outputBuffer = await sharp(templateBuffer)
       .composite(compositeInputs)
       .jpeg({ quality: 90 })
       .toBuffer();
 
     // Save to /uploads
-    const uploadsDir = path.join(__dirname, '..', 'uploads');
+    const uploadsDir = path.resolve(__dirname, '..', 'uploads');
     if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
     const filename = `generated_${Date.now()}.jpg`;
@@ -158,6 +174,7 @@ export const generateImage = async (req, res, next) => {
     const imageUrl = `/uploads/${filename}`;
     res.json({ imageUrl, message: 'Image generated successfully' });
   } catch (error) {
+    console.error('CRITICAL GENERATION ERROR:', error.stack);
     next(error);
   }
 };
