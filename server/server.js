@@ -59,27 +59,30 @@ const startServer = async () => {
   app.use('/api/image', imageRoutes);
   app.use('/api/subscription', subscriptionRoutes);
 
+  // Define frontend path
+  const clientBuildPath = path.resolve(__dirname, '../client/dist');
+
   // Root & Frontend serving in production
   if (process.env.NODE_ENV === 'production') {
-    const clientBuildPath = path.resolve(__dirname, '../client/dist');
-    console.log('--- PRODUCTION PATH DEBUG ---');
-    console.log('__dirname:', __dirname);
-    console.log('clientBuildPath:', clientBuildPath);
+    console.log('--- PRODUCTION STARTUP ---');
+    console.log('Serving from:', clientBuildPath);
     console.log('Exists:', fs.existsSync(clientBuildPath));
-    console.log('Contents:', fs.readdirSync(clientBuildPath));
-    console.log('-----------------------------');
+    console.log('--------------------------');
     
-    app.use(express.static(clientBuildPath));
+    // 1. Serve static files with high priority
+    app.use(express.static(clientBuildPath, { index: false }));
 
-    // Handle SPA routing - send index.html for all navigation requests
+    // 2. Handle all other requests
     app.use((req, res, next) => {
-      // If it's an API request, let it pass
+      // API requests go to routers
       if (req.path.startsWith('/api')) return next();
       
-      // If it's a request for a file (has an extension), let it fail with 404
-      if (req.path.includes('.')) return next();
-      
-      // Otherwise, serve the frontend for navigation
+      // If it looks like a file request but wasn't found by express.static, 404 it
+      if (req.path.includes('.') && !req.path.endsWith('.html')) {
+        return res.status(404).send('File not found');
+      }
+
+      // Everything else gets index.html (SPA routing)
       res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
   } else {
